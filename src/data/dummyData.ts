@@ -58,8 +58,33 @@ export const ROADMAPS: Roadmap[] = [
                 title: 'Evliliğe Karar Verme',
                 description: 'Karşılıklı duyguların tespiti ve geleceğe yönelik planların netleştirilmesi.',
                 children: [
-                    { id: 'j1.1', title: 'Duygusal Bağ Analizi', description: 'Hislerinizin karşılıklı olup olmadığını anlamak.' },
-                    { id: 'j1.2', title: 'Gelecek Planlarını Konuşma', description: 'Ortak hedefler ve beklentiler hakkında açık iletişim.' },
+                    { 
+                        id: 'j1.1', 
+                        title: 'Duygusal Bağ Analizi', 
+                        description: 'Hislerinizin karşılıklı olup olmadığını anlamak.',
+                        children: [
+                            { 
+                                id: 'j1.1.1', 
+                                title: 'Açık İletişim', 
+                                description: 'Duyguları samimi bir şekilde ifade etme.',
+                                children: [
+                                    { id: 'j1.1.1.1', title: 'Aktif Dinleme', description: 'Elsin\'i gerçekten dinleme ve anlama.' },
+                                    { id: 'j1.1.1.2', title: 'Empati Kurma', description: 'Onun bakış açısını anlama çabası.' },
+                                ]
+                            },
+                            { id: 'j1.1.2', title: 'Gözlem ve Anlama', description: 'Elsin\'in tepkilerini ve hislerini dikkatle gözlemleme.' },
+                        ]
+                    },
+                    { 
+                        id: 'j1.2', 
+                        title: 'Gelecek Planlarını Konuşma', 
+                        description: 'Ortak hedefler ve beklentiler hakkında açık iletişim.',
+                        children: [
+                            { id: 'j1.2.1', title: 'Kariyer Hedefleri', description: 'İki tarafın da kariyer beklentilerini paylaşma.' },
+                            { id: 'j1.2.2', title: 'Yaşam Tarzı Tercihleri', description: 'Ortak yaşam tarzı ve günlük rutin beklentileri.' },
+                            { id: 'j1.2.3', title: 'Çocuk Konusu', description: 'Çocuk sahibi olma veya olmama konusundaki düşünceler.' },
+                        ]
+                    },
                 ]
             },
             {
@@ -67,7 +92,15 @@ export const ROADMAPS: Roadmap[] = [
                 title: 'Teklif Aşaması',
                 description: 'Unutulmaz bir evlilik teklifi planlaması.',
                 children: [
-                    { id: 'j2.1', title: 'Yaratıcı Fikirler', description: 'Sıradışı ve kişiye özel teklif önerileri.' },
+                    { 
+                        id: 'j2.1', 
+                        title: 'Yaratıcı Fikirler', 
+                        description: 'Sıradışı ve kişiye özel teklif önerileri.',
+                        children: [
+                            { id: 'j2.1.1', title: 'Hobilerini Araştır', description: 'Elsin\'in ilgi alanlarına göre fikirler geliştir.' },
+                            { id: 'j2.1.2', title: 'Gizli Sürprizler', description: 'Beklenmedik anlar yaratma.' },
+                        ]
+                    },
                     { id: 'j2.2', title: 'Mekan ve Zaman Seçimi', description: 'Teklif için en uygun ortamın belirlenmesi.' },
                 ]
             },

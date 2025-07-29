@@ -10,9 +10,10 @@ export const colors = {
   text: '#d1d5db',            // Ana metin rengi (kirli beyaz)
   textSecondary: '#9ca3af',   // İkincil metin rengi (gri)
   border: '#374151',          // Kenarlık rengi
-  accent: '#E53935',       // Vurgu rengi (kırmızı, bu kalabilir)
-  error: '#EF4444',        // Yeni eklenen hata rengi (kırmızı)
-  white: '#FFFFFF',        // Yeni eklenen beyaz renk
+  accent: '#E53935',       // Vurgu rengi (kırmızı)
+  error: '#EF4444',        // Hata rengi
+  white: '#FFFFFF',        // Beyaz renk
+  yellowAccent: '#facc15', // Yeni eklenen sarı vurgu rengi
 };
 
 // globalStyles objesinde değişiklik yok, olduğu gibi kalabilir
