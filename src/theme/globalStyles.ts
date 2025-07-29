@@ -38,3 +38,5 @@ export const globalStyles = StyleSheet.create({
     elevation: 3,
   },
 });
+
+

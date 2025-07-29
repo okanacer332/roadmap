@@ -5,10 +5,12 @@ import { View, StyleSheet, StatusBar, ScrollView, Dimensions, Text, TextInput, T
 import Svg, { Rect, Text as SvgText, Path, G } from 'react-native-svg';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
-import { ROADMAPS, RoadmapNode, Comment } from '../data/dummyData'; // Comment import edildi
-import { colors } from '../theme/globalStyles'; // colors import edildi
+import { ROADMAPS, RoadmapNode, Comment } from '../data/dummyData';
+import { colors } from '../theme/globalStyles';
+
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RoadmapDetail'>;
+
 
 // Android'de LayoutAnimation'ı etkinleştir
 if (Platform.OS === 'android') {
@@ -17,10 +19,10 @@ if (Platform.OS === 'android') {
 }
 
 // Nod boyutları ve boşluklar ayarlandı
-const BOX_WIDTH = 200; // Genişlik artırıldı
-const BOX_HEIGHT = 60; // Yükseklik artırıldı
-const HORIZONTAL_GAP = 70; // Yatay boşluk artırıldı
-const VERTICAL_GAP = 60;   // Dikey boşluk biraz azaltıldı
+const BOX_WIDTH = 200;
+const BOX_HEIGHT = 60;
+const HORIZONTAL_GAP = 70;
+const VERTICAL_GAP = 60;
 const PADDING = 20;
 
 interface DrawableNode extends RoadmapNode {
@@ -28,6 +30,7 @@ interface DrawableNode extends RoadmapNode {
   y: number;
   width: number;
   height: number;
+  level: number; // Node'un seviyesini takip etmek için eklendi
 }
 
 interface DrawableLine {
@@ -36,8 +39,6 @@ interface DrawableLine {
 }
 
 // DUMMY_COMMENTS için dummyData.ts'deki Comment arayüzünü kullanıyoruz.
-// Bu yüzden DUMMY_COMMENTS'in yapısı da dummyData.ts'deki Comment arayüzüne uymalı.
-// Not: dummyData.ts'deki Comment arayüzü 'author' yerine 'username' kullanıyor.
 const DUMMY_COMMENTS: Comment[] = [
   { id: 'c99', userId: 'u99', username: 'Misafir Kullanıcı 1', text: 'Bu yol haritası çok ilham verici!', timestamp: '2025-07-29T18:00:00Z' },
   { id: 'c98', userId: 'u98', username: 'Misafir Kullanıcı 2', text: 'Harika bir bakış açısı sunmuş.', timestamp: '2025-07-29T18:05:00Z' },
@@ -47,7 +48,6 @@ const RoadmapDetailScreen = ({ route }: Props) => {
   const { roadmapId } = route.params;
   const selectedRoadmap = ROADMAPS.find(roadmap => roadmap.id === roadmapId);
 
-  // selectedRoadmap bulunamazsa erken çıkış yapıyoruz
   if (!selectedRoadmap) {
     return (
       <View style={styles.container}>
@@ -59,9 +59,8 @@ const RoadmapDetailScreen = ({ route }: Props) => {
 
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
   const [newCommentText, setNewCommentText] = useState<string>('');
-  // Mevcut yorumları dummyData'dan alınan yorumlar ve eklediğimiz dummy yorumlarla birleştiriyoruz.
   const [comments, setComments] = useState<Comment[]>([...selectedRoadmap.comments, ...DUMMY_COMMENTS]);
-  const [showCommentsSection, setShowCommentsSection] = useState(false); // Yorum bölümü görünürlüğü için state
+  const [showCommentsSection, setShowCommentsSection] = useState(false);
 
   const toggleNode = (nodeId: string) => {
     const newSet = new Set(expandedNodes);
@@ -75,22 +74,21 @@ const RoadmapDetailScreen = ({ route }: Props) => {
 
   const handleAddComment = () => {
     if (newCommentText.trim() === '') {
-      return; // Boş yorum eklemeyi engelle
+      return;
     }
     const newComment: Comment = {
-      id: String(comments.length + 1), // Basit bir ID ataması
-      userId: 'uAnonim', // Geçici kullanıcı ID'si
-      username: 'Anonim Kullanıcı', // DummyData'daki Comment arayüzüne uygun olarak 'username' kullanıldı
+      id: String(comments.length + 1),
+      userId: 'uAnonim',
+      username: 'Anonim Kullanıcı',
       text: newCommentText.trim(),
-      timestamp: new Date().toISOString(), // Güncel zaman damgası
+      timestamp: new Date().toISOString(),
     };
     setComments(prevComments => [...prevComments, newComment]);
     setNewCommentText('');
   };
 
-  // Yorum bölümünü açıp kapatma fonksiyonu
   const toggleCommentsSection = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); // Yumuşak geçiş için animasyon
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setShowCommentsSection(prevState => !prevState);
   };
 
@@ -106,7 +104,7 @@ const RoadmapDetailScreen = ({ route }: Props) => {
       const isExpanded = expandedNodes.has(node.id);
       
       const nodeX = x;
-      nodesToDraw.push({ ...node, x: nodeX, y, width: nodeWidth, height: nodeHeight });
+      nodesToDraw.push({ ...node, x: nodeX, y, width: nodeWidth, height: nodeHeight, level: level }); // level eklendi
       
       canvasBounds.minX = Math.min(canvasBounds.minX, nodeX);
       canvasBounds.maxX = Math.max(canvasBounds.maxX, nodeX + nodeWidth);
@@ -124,8 +122,7 @@ const RoadmapDetailScreen = ({ route }: Props) => {
       let currentY = y + nodeHeight + VERTICAL_GAP;
       
       if (isExpanded && node.children) {
-        // ZIGZAG LOGIC
-        const direction = level % 2 === 0 ? 1 : -1; // 1 for right, -1 for left
+        const direction = level % 2 === 0 ? 1 : -1;
         const childX_offset = HORIZONTAL_GAP * direction;
 
         node.children.forEach(child => {
@@ -136,10 +133,8 @@ const RoadmapDetailScreen = ({ route }: Props) => {
       return currentY;
     }
 
-    // İlk adımı (root node) yatayda ortalamak için başlangıç x değeri
     layout(selectedRoadmap.nodes[0], baseCanvasWidth / 2 - BOX_WIDTH / 2, PADDING);
 
-    // Tüm koordinatları sol kenara (PADDING) göre ayarlamak için shiftX hesaplaması
     const shiftX = PADDING - canvasBounds.minX;
     const finalNodes = nodesToDraw.map(n => ({ ...n, x: n.x + shiftX }));
     const finalLines = linesToDraw.map(l => {
@@ -158,6 +153,14 @@ const RoadmapDetailScreen = ({ route }: Props) => {
       canvasSize: { width: canvasBounds.maxX - canvasBounds.minX + PADDING * 2, height: canvasBounds.maxY + PADDING },
     };
   }, [selectedRoadmap, expandedNodes]);
+
+  // Node seviyesine göre font boyutunu belirleyen yardımcı fonksiyon
+  const getNodeFontSize = (level: number) => {
+    if (level === 0) return 16; // Ana düğüm
+    if (level === 1) return 14; // Birinci seviye alt düğüm
+    if (level === 2) return 12; // İkinci seviye alt düğüm
+    return 10; // Daha derin seviyeler
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -186,7 +189,7 @@ const RoadmapDetailScreen = ({ route }: Props) => {
           {drawableNodes.map(node => {
             const isExpanded = expandedNodes.has(node.id);
             const canExpand = node.children && node.children.length > 0;
-            const isRootNode = node.id === selectedRoadmap.nodes[0].id; // İlk düğümü belirle
+            const isRootNode = node.id === selectedRoadmap.nodes[0].id;
             return (
               <G key={node.id} onPress={() => canExpand && toggleNode(node.id)}>
                 <Rect 
@@ -194,31 +197,30 @@ const RoadmapDetailScreen = ({ route }: Props) => {
                   y={node.y} 
                   width={node.width} 
                   height={node.height} 
-                  fill={isRootNode ? colors.primary : colors.cardBackground} // İlk düğüm farklı renk
-                  stroke={isExpanded ? colors.yellowAccent : colors.border} // Genişletilmişse sarı kenarlık
+                  fill={isRootNode ? colors.primary : colors.cardBackground}
+                  stroke={isExpanded ? colors.yellowAccent : colors.border}
                   strokeWidth="2" 
                   rx={10} 
                 />
                 <SvgText 
                   x={node.x + node.width / 2} 
                   y={node.y + node.height / 2 + 5} 
-                  fill={isRootNode ? colors.white : colors.text} // İlk düğüm metni beyaz
-                  fontSize="14" 
+                  fill={isRootNode ? colors.white : colors.text}
+                  fontSize={getNodeFontSize(node.level)} // Seviyeye göre font boyutu
                   fontWeight="bold" 
                   textAnchor="middle"
-                  // Metin çok uzunsa kırpma veya küçültme (opsiyonel)
-                  textLength={node.width - 30} // Metin uzunluğunu kutuya sığdırmak için ayarla
+                  textLength={node.width - 30}
                   lengthAdjust="spacingAndGlyphs"
                 >
                   {node.title}
                 </SvgText>
                 {canExpand && (
                   <SvgText 
-                    x={node.x + node.width - 15} // '+' butonu sağ kenara yakın konumlandırıldı
-                    y={node.y + node.height - 10} // '+' butonu alt kenara yakın konumlandırıldı
-                    fill={isRootNode ? colors.white : colors.textSecondary} // İlk düğümde beyaz, diğerlerinde ikincil renk
+                    x={node.x + node.width - 15}
+                    y={node.y + node.height - 10}
+                    fill={isRootNode ? colors.white : colors.textSecondary}
                     fontSize="20"
-                    textAnchor="end" // Metni sağa yasla
+                    textAnchor="end"
                   >
                     {isExpanded ? '−' : '+'}
                   </SvgText>
@@ -255,14 +257,14 @@ const RoadmapDetailScreen = ({ route }: Props) => {
 
             {/* Yorum Listesi */}
             {comments.length === 0 ? (
-              <Text style={styles.noCommentsText}>Henüz yorum yok.</Text>
+              <Text style={styles.commentText}>Henüz yorum yok.</Text>
             ) : (
               <FlatList
                 data={comments}
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => (
                   <View style={styles.commentItem}>
-                    <Text style={styles.commentAuthor}>{item.username}</Text> {/* 'author' yerine 'username' kullanıldı */}
+                    <Text style={styles.commentAuthor}>{item.username}</Text>
                     <Text style={styles.commentText}>{item.text}</Text>
                     <Text style={styles.commentTimestamp}>{new Date(item.timestamp).toLocaleString()}</Text>
                   </View>
@@ -283,7 +285,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    // Ekranın genel padding'i artık buradan kontrol edilebilir
   },
   errorText: {
     color: colors.error, 
@@ -316,18 +317,18 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   svgScrollView: {
-    alignItems: 'center', // SVG içeriğini yatayda ortalar
+    alignItems: 'center',
     paddingBottom: PADDING,
     marginHorizontal: PADDING,
   },
   commentsContainer: {
     marginTop: PADDING,
-    marginHorizontal: PADDING, // Ekran kenarlarından boşluk
+    marginHorizontal: PADDING,
     backgroundColor: colors.cardBackground,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: colors.border,
-    overflow: 'hidden', // İçerik taşmasını engeller (animasyon için önemli)
+    overflow: 'hidden',
   },
   commentsToggleHeader: {
     flexDirection: 'row',
@@ -365,7 +366,7 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 16,
     minHeight: 40,
-    maxHeight: 100, // Yorum alanının çok büyümesini engeller
+    maxHeight: 100,
     paddingHorizontal: 5,
   },
   commentSendButton: {
@@ -402,12 +403,6 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginTop: 5,
     textAlign: 'right',
-  },
-  noCommentsText: {
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginTop: 20,
-    fontStyle: 'italic',
   },
 });
 
