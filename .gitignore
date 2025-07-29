@@ -1,0 +1,119 @@
+# Node Modules
+node_modules/
+.npm/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.log
+
+# Mac OS specific files
+.DS_Store
+.Trashes
+.Spotlight-V100
+.TemporaryItems
+._*
+
+# Windows specific files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Android specific files
+android/build/
+android/app/build/
+android/app/.cxx/
+android/app/.externalNativeBuild/
+android/.gradle/
+*.apk
+*.ap_
+*.aab
+*.keystore
+local.properties
+.idea/
+captures/
+.externalNativeBuild/
+.cxx/
+build/
+app/build/
+app/.externalNativeBuild/
+app/.cxx/
+gradle-wrapper.jar
+gradle/wrapper/gradle-wrapper.jar
+/android/.gradle
+/android/build
+/android/app/build
+/android/app/src/main/assets/
+/android/.idea
+/android/*.iml
+/android/local.properties
+
+# iOS specific files
+ios/build/
+ios/Pods/
+ios/.symlinks/
+ios/DerivedData/
+ios/*.xcworkspace/
+ios/*.xcodeproj/xcuserdata/
+ios/*.xcodeproj/project.xcworkspace/
+ios/*.xcodeproj/xcshareddata/
+ios/.idea/
+ios/Podfile.lock
+ios/Frameworks/
+ios/Carthage/
+/ios/.idea
+/ios/build
+/ios/Pods
+/ios/.symlinks
+/ios/DerivedData
+/ios/*.xcworkspace/
+/ios/*.xcodeproj/xcuserdata/
+/ios/*.xcodeproj/project.xcworkspace/
+/ios/*.xcodeproj/xcshareddata/
+
+# VS Code specific files
+.vscode/
+
+# Environment variables
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Expo specific files (if applicable)
+.expo/
+web-build/
+
+# Jest/testing specific files
+/coverage
+/.jest-cache
+
+# Other common ignored files
+dist/
+build/
+tmp/
+*.swp
+*.bak
+*.swo
+*.orig
+*.log
+
+# React Native specific
+/temp/
+/android/app/src/main/assets/
+/android/gradlew
+/android/gradlew.bat
+/ios/Podfile.lock
+/ios/build
+/ios/Pods
+
+# Your specific files from the image that might be generated or temporary
+# If you have specific build outputs or generated files in these folders that aren't already covered, add them here.
+# For example, if 'vendor' or 'babel.config.js' (if it's auto-generated and not part of your source)
+# but generally, 'vendor' and 'babel.config.js' are source files and should NOT be ignored.
+# The image shows 'vendor' and 'babel.config.js' as part of your source, so they should NOT be ignored.
+# If 'babel.config.js' is truly auto-generated and needs to be ignored, add it.
+# Usually, 'babel.config.js' is part of your project's configuration and should be committed.
